@@ -4,20 +4,26 @@ A Claude Code plugin that provides specialized review agents and engineering ski
 
 ## Installation
 
-Add this plugin to your Claude Code configuration by including it in your `.claude/settings.json`:
+### Per-session
 
-```json
-{
-  "plugins": [
-    "/path/to/claude-engineering-toolkit"
-  ]
-}
-```
-
-Or install it directly:
+Use the `--plugin-dir` flag when starting Claude Code:
 
 ```bash
-claude plugin add /path/to/claude-engineering-toolkit
+claude --plugin-dir /path/to/claude-engineering-toolkit
+```
+
+### Always loaded (shell alias)
+
+To permanently load the plugin in every session, add an alias to your shell config (`~/.bashrc`, `~/.zshrc`, etc.):
+
+```bash
+alias claude='claude --plugin-dir /path/to/claude-engineering-toolkit'
+```
+
+Then reload your shell config:
+
+```bash
+source ~/.bashrc
 ```
 
 ## Skills
