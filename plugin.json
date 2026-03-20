@@ -1,0 +1,9 @@
+{
+  "name": "engineering-toolkit",
+  "description": "Specialized review agents and engineering skills for parallel PR review and Jira workflows",
+  "version": "1.0.0",
+  "components": {
+    "agents": "agents/",
+    "skills": "skills/"
+  }
+}
