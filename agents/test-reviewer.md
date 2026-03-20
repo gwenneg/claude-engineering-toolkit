@@ -9,6 +9,8 @@ tools: [Read, Glob, Grep, Bash]
 
 Review all changes on the current branch vs the main branch for test quality.
 
+IMPORTANT: Only review files and lines that appear in the diff (`git diff master...HEAD`). You may read surrounding context in those files to understand the change, but do NOT report findings on files or code that are not part of the changeset.
+
 Focus on:
 - Missing test coverage for new or modified code paths
 - Untested edge cases (nulls, empty collections, boundary values, error paths)

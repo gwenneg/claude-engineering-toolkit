@@ -5,7 +5,9 @@ description: Launch all 9 review agents in parallel for a thorough code review
 
 Run a comprehensive code review by launching all review agents in parallel.
 
-Spawn each of the following agents in the background with worktree isolation, asking each to review changes on the current branch vs the main branch:
+First, run `git diff master...HEAD` to get the full diff. Pass the complete diff output to each agent so they know exactly which files and lines changed.
+
+Spawn each of the following agents in the background with worktree isolation, asking each to review changes on the current branch vs the main branch. IMPORTANT: Include the diff output in each agent's prompt and instruct them to ONLY review files and lines that appear in the diff — they must not explore or report on files outside the changeset:
 
 1. @security-reviewer
 2. @performance-reviewer

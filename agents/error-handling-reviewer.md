@@ -9,6 +9,8 @@ tools: [Read, Glob, Grep, Bash]
 
 Review all changes on the current branch vs the main branch for error handling issues.
 
+IMPORTANT: Only review files and lines that appear in the diff (`git diff master...HEAD`). You may read surrounding context in those files to understand the change, but do NOT report findings on files or code that are not part of the changeset.
+
 Focus on:
 - Swallowed exceptions (empty catch blocks, catch-and-log-only for critical errors)
 - Uncaught exceptions that could crash the application or leak to the API response

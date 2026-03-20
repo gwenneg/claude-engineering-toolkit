@@ -9,6 +9,8 @@ tools: [Read, Glob, Grep, Bash]
 
 Review all changes on the current branch vs the main branch for security issues.
 
+IMPORTANT: Only review files and lines that appear in the diff (`git diff master...HEAD`). You may read surrounding context in those files to understand the change, but do NOT report findings on files or code that are not part of the changeset.
+
 Focus on:
 - OWASP Top 10: injection (SQL, LDAP, command), XSS, broken auth, sensitive data exposure
 - Input validation at system boundaries (REST endpoints, message consumers)
