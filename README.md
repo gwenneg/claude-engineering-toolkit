@@ -1,6 +1,6 @@
 # Claude Engineering Toolkit
 
-A Claude Code plugin that provides specialized review agents and engineering skills for thorough, parallel code reviews and Jira workflows.
+A Claude Code plugin that provides specialized review agents and engineering skills for thorough, parallel code reviews, Jira workflows, and ticket-driven implementation.
 
 ## Installation
 
@@ -67,6 +67,24 @@ The skill will:
 - Set the appropriate issue type (Story, Bug, Task) and priority
 - Search the codebase for relevant file paths and line numbers
 - Create the ticket via Jira MCP and return the ticket key and URL
+
+### `/implement` - Implement a Feature from a Jira Ticket
+
+Implements a feature based on a Jira ticket, with built-in quality gates for ticket completeness and service documentation. Requires Jira MCP tools to be configured.
+
+```
+/implement RHCLOUD-44561
+```
+
+The skill will:
+1. **Fetch the ticket** from Jira and extract summary, description, acceptance criteria, and linked issues
+2. **Validate ticket quality** — checks for Context/Background, Technical Details, and Acceptance Criteria sections. Stops if missing and asks whether to proceed or improve the ticket first
+3. **Validate service documentation** — looks for a `.claude-skill-implement.md` file in the repo root containing Architecture Overview, API Contracts, Data Model, Coding Conventions, Business Rules, and Known Risks. Stops if missing or incomplete
+4. **Plan the implementation** — identifies files to change, breaks work into steps, calls out assumptions, and asks for confirmation before writing code
+5. **Implement the feature** — writes code following existing codebase patterns and conventions
+6. **Verify acceptance criteria** — presents a checklist of each criterion with pass/fail status
+
+The skill never pushes code, opens PRs, or takes any action visible to others — its scope ends at local implementation.
 
 ## Review Agents
 
