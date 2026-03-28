@@ -25,6 +25,8 @@ Focus on:
 - Bulk operations that should use UPDATE/DELETE queries instead of loading entities
 - Projection opportunities (selecting full entities when only a few fields are needed)
 
+Before starting the review, check if `docs/database-guidelines.md` exists. If it does, read it and use it as additional review criteria — flag violations of those repo-specific guidelines with the same severity system as other findings.
+
 For each finding, report:
 - File and line number
 - Impact (High / Medium / Low)

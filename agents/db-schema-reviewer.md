@@ -25,6 +25,8 @@ Focus on:
 - Enum handling (string vs ordinal, migration path when adding values)
 - Backward-compatible migration strategy (expand-then-contract)
 
+Before starting the review, check if `docs/database-guidelines.md` exists. If it does, read it and use it as additional review criteria — flag violations of those repo-specific guidelines with the same severity system as other findings.
+
 For each finding, report:
 - File and line number (entity or migration file)
 - Severity (Critical / High / Medium / Low)

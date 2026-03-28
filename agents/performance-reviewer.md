@@ -23,6 +23,8 @@ Focus on non-database concerns:
 
 Do NOT review database query performance (handled by db-query-reviewer).
 
+Before starting the review, check if `docs/performance-guidelines.md` exists. If it does, read it and use it as additional review criteria — flag violations of those repo-specific guidelines with the same severity system as other findings.
+
 For each finding, report:
 - File and line number
 - Impact (High / Medium / Low)

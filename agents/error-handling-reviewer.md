@@ -22,6 +22,8 @@ Focus on:
 - Proper HTTP status codes for error responses
 - Error propagation across service boundaries
 
+Before starting the review, check if `docs/error-handling-guidelines.md` exists. If it does, read it and use it as additional review criteria — flag violations of those repo-specific guidelines with the same severity system as other findings.
+
 For each finding, report:
 - File and line number
 - Severity (Critical / High / Medium / Low)

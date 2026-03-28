@@ -21,6 +21,8 @@ Focus on:
 - Unsafe use of cryptographic functions
 - HTTP header security (CORS, CSP, HSTS)
 
+Before starting the review, check if `docs/security-guidelines.md` exists. If it does, read it and use it as additional review criteria — flag violations of those repo-specific guidelines with the same severity system as other findings.
+
 For each finding, report:
 - File and line number
 - Severity (Critical / High / Medium / Low)
