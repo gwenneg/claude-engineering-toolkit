@@ -64,7 +64,10 @@ Generates a well-structured Jira ticket from a natural language description. Req
 The skill will:
 - Write a concise summary (under 100 characters)
 - Add context, details, and acceptance criteria to the description
-- Set the appropriate issue type (Story, Bug, Task) and priority
+- Set the appropriate issue type (Epic, Story, or Spike) and priority
+- Set the Activity Type (e.g., Product/Portfolio Work, Security & Compliance, Quality/Stability/Reliability)
+- Assign the team, component, and labels automatically
+- Optionally create a paired QE testing ticket
 - Search the codebase for relevant file paths and line numbers
 - Create the ticket via Jira MCP and return the ticket key and URL
 
@@ -85,6 +88,51 @@ The skill will:
 6. **Verify acceptance criteria** — presents a checklist of each criterion with pass/fail status
 
 The skill never pushes code, opens PRs, or takes any action visible to others — its scope ends at local implementation.
+
+### `/my-work` - Prioritized Work Dashboard
+
+Displays a prioritized dashboard of your current work across Jira, GitHub, and Google Tasks. Requires Jira MCP tools and `gh` CLI to be configured.
+
+```
+/my-work
+```
+
+The skill will:
+- Fetch your assigned Jira tickets (not Done/Closed), open GitHub review requests, and incomplete Google Tasks — all in parallel
+- Display three sorted tables: Jira tickets by priority/status, GitHub PRs (non-draft first), and Google Tasks by due date
+- Provide prioritized recommendations on what to work on next
+
+### `/agent-ready` - AI-Readiness Assessment
+
+Assesses how well a repository is set up for AI-assisted development. Read-only — does not modify any files.
+
+```
+/agent-ready
+```
+
+The skill evaluates the repo across 5 dimensions (100 points total):
+1. **Documentation** (20 pts) — README, build instructions, CLAUDE.md, architecture docs, API docs
+2. **Testing** (20 pts) — test framework, coverage, documented run commands, consistent patterns, integration tests
+3. **Code Quality & Conventions** (20 pts) — linters, naming conventions, project structure, lock files, error handling
+4. **CI/CD & Automation** (15 pts) — CI pipeline, pre-commit hooks, reproducible builds
+5. **AI Agent Ergonomics** (25 pts) — CLAUDE.md quality, domain-specific guideline files, service documentation, repo navigation
+
+Scores map to grades: A (80-100), B (60-79), C (40-59), D (0-39). Includes the top 5 highest-impact improvement recommendations.
+
+### `/generate-agent-guidelines` - Generate Domain Guidelines
+
+Generates domain-specific guideline files (`docs/*-guidelines.md`) for the review agents by thoroughly exploring the codebase.
+
+```
+/generate-agent-guidelines
+```
+
+The skill will:
+1. Identify which domains are relevant to the repo (security, performance, error-handling, api-contracts, database, testing, integration)
+2. Launch parallel exploration agents to analyze the codebase from each domain's perspective
+3. Launch parallel verification agents to check accuracy of file paths, function names, and factual claims
+4. Write guideline files and update CLAUDE.md with links to them
+5. Optionally create a pull request with the changes
 
 ## Review Agents
 
