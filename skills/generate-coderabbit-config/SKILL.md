@@ -36,8 +36,8 @@ Build a minimal `.coderabbit.yaml` with only the fields that differ from CodeRab
 3. The `knowledge_base` section pointing to the guideline files:
    ```yaml
    knowledge_base:
-     coding_guidelines:
-       file_patterns:
+     code_guidelines:
+       filePatterns:
          - "docs/*-guidelines.md"
    ```
 
@@ -48,9 +48,9 @@ Do not include any other fields or sections — only what differs from CodeRabbi
 If a `.coderabbit.yaml` already exists at the repo root:
 
 1. Read the existing file
-2. Merge the new `knowledge_base.coding_guidelines.file_patterns` entry into the existing configuration
+2. Merge the new `knowledge_base.code_guidelines.filePatterns` entry into the existing configuration
 3. Preserve all existing settings — do not remove or overwrite them
-4. If the existing file already contains a `knowledge_base.coding_guidelines.file_patterns` entry, merge the patterns (avoid duplicates)
+4. If the existing file already contains a `knowledge_base.code_guidelines.filePatterns` entry, merge the patterns (avoid duplicates)
 5. Ensure the schema comment and reference comment are present at the top of the file, adding them if missing
 
 If no `.coderabbit.yaml` exists, create a new one with the content from step 2.
