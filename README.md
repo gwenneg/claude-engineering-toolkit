@@ -32,7 +32,7 @@ Skills are user-invocable commands you can run directly in Claude Code with the 
 
 ### `/full-review` - Parallel Code Review
 
-Launches all 9 review agents in parallel to perform a comprehensive code review. Each agent runs in its own isolated worktree, reviewing changes on your current branch vs `main`.
+Launches all 9 review agents in parallel to perform a comprehensive code review, comparing changes on your current branch vs `main`.
 
 ```
 /full-review
@@ -102,37 +102,30 @@ The skill will:
 - Display three sorted tables: Jira tickets by priority/status, GitHub PRs (non-draft first), and Google Tasks by due date
 - Provide prioritized recommendations on what to work on next
 
-### `/agent-ready` - AI-Readiness Assessment
+### `/agent-readiness` - AI-Readiness Assessment
 
-Assesses how well a repository is set up for AI-assisted development. Read-only — does not modify any files.
-
-```
-/agent-ready
-```
-
-The skill evaluates the repo across 5 dimensions (100 points total):
-1. **Documentation** (20 pts) — README, build instructions, CLAUDE.md, architecture docs, API docs
-2. **Testing** (20 pts) — test framework, coverage, documented run commands, consistent patterns, integration tests
-3. **Code Quality & Conventions** (20 pts) — linters, naming conventions, project structure, lock files, error handling
-4. **CI/CD & Automation** (15 pts) — CI pipeline, pre-commit hooks, reproducible builds
-5. **AI Agent Ergonomics** (25 pts) — CLAUDE.md quality, domain-specific guideline files, service documentation, repo navigation
-
-Scores map to grades: A (80-100), B (60-79), C (40-59), D (0-39). Includes the top 5 highest-impact improvement recommendations.
-
-### `/generate-agent-guidelines` - Generate Domain Guidelines
-
-Generates domain-specific guideline files (`docs/*-guidelines.md`) for the review agents by thoroughly exploring the codebase.
+Assesses how well a repository is set up for AI-assisted development, then offers to improve it step by step.
 
 ```
-/generate-agent-guidelines
+/agent-readiness
 ```
 
-The skill will:
-1. Identify which domains are relevant to the repo (security, performance, error-handling, api-contracts, database, testing, integration)
-2. Launch parallel exploration agents to analyze the codebase from each domain's perspective
-3. Launch parallel verification agents to check accuracy of file paths, function names, and factual claims
-4. Write guideline files and update CLAUDE.md with links to them
-5. Optionally create a pull request with the changes
+The skill checks 7 requirements and presents a status table:
+1. Domain-specific guideline files (`docs/*-guidelines.md`)
+2. AGENTS.md with AI guidance and docs index
+3. CLAUDE.md imports AGENTS.md
+4. CodeRabbit configured with guideline files
+5. README.md with foundational context
+6. CONTRIBUTING.md with contribution conventions
+7. docs/ARCHITECTURE.md with institutional knowledge
+
+After the initial assessment, it walks you through improving each area:
+- **Generate guideline files** — launches parallel agents to explore the codebase per domain, then verifies accuracy
+- **Generate AGENTS.md** — creates a docs index and AI-specific repo conventions
+- **Configure CLAUDE.md** — adds `@AGENTS.md` import for persistent agent context
+- **Configure CodeRabbit** — points `.coderabbit.yaml` to the guideline files
+- **Before/after comparison** — re-checks all requirements and shows improvement
+- **Optional PR** — creates a pull request with all changes
 
 ## Review Agents
 
@@ -150,7 +143,7 @@ The plugin includes 9 specialized review agents. Each agent focuses on a specifi
 | `@db-schema-reviewer` | Opus | Missing indexes, migration safety, constraints, column types |
 | `@integration-reviewer` | Sonnet | Webhook delivery, retries, idempotency, circuit breakers |
 
-All agents run with `worktree` isolation and in the `background`, comparing the current branch against `main`.
+All agents run in the `background`, comparing the current branch against `main`.
 
 ## Code Review Workflows
 
