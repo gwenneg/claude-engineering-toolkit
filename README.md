@@ -82,7 +82,7 @@ Implements a feature based on a Jira ticket, with built-in quality gates for tic
 The skill will:
 1. **Fetch the ticket** from Jira and extract summary, description, acceptance criteria, and linked issues
 2. **Validate ticket quality** — checks for Context/Background, Technical Details, and Acceptance Criteria sections. Stops if missing and asks whether to proceed or improve the ticket first
-3. **Validate service documentation** — looks for a `.claude-skill-implement.md` file in the repo root containing Architecture Overview, API Contracts, Data Model, Coding Conventions, Business Rules, and Known Risks. Stops if missing or incomplete
+3. **Load service guidelines** — looks for guideline files matching `docs/*-guidelines.md` containing architecture, conventions, data model, and other service-specific context. Stops if none are found and asks whether to proceed
 4. **Plan the implementation** — identifies files to change, breaks work into steps, calls out assumptions, and asks for confirmation before writing code
 5. **Implement the feature** — writes code following existing codebase patterns and conventions
 6. **Verify acceptance criteria** — presents a checklist of each criterion with pass/fail status

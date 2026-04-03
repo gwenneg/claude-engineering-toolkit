@@ -1,13 +1,13 @@
 ---
 name: implement
-description: Implement a feature based on a Jira ticket, with ticket quality and service doc validation
+description: Implement a feature based on a Jira ticket, with ticket quality and guideline validation
 ---
 
 Implement the feature described in the following Jira ticket: $ARGUMENTS
 
 ## Step 1: Fetch the Jira ticket
 
-Use the Jira MCP tools to fetch the ticket details (summary, description, acceptance criteria, comments, linked issues). If the ticket key is invalid or cannot be found, tell the user and stop.
+Use the Jira MCP tools to fetch the ticket details (summary, description, acceptance criteria, comments, linked issues). Make sure to request the `customfield_10718` field, which is the dedicated "Acceptance Criteria" field. If the ticket key is invalid or cannot be found, tell the user and stop.
 
 ## Step 2: Validate ticket quality
 
@@ -15,7 +15,7 @@ Check that the ticket description contains ALL of the following sections. Sectio
 
 1. **Context / Background** — an explanation of why this work is needed, what problem it solves, or what business goal it serves.
 2. **Technical Details** — implementation hints, constraints, API references, affected components, or other specifics that guide the implementation.
-3. **Acceptance Criteria** — a bullet list of conditions that must be met for the work to be considered done.
+3. **Acceptance Criteria** — a bullet list of conditions that must be met for the work to be considered done. This may be in the description OR in the dedicated custom field `customfield_10718`. Check both locations.
 
 If any section is missing:
 
@@ -25,35 +25,15 @@ If any section is missing:
 - Ask the user whether they want to stop and improve the ticket, or bypass the recommendation and proceed anyway.
 - If the user chooses to bypass, acknowledge the risk and continue. Clearly note in your output which sections were missing so there is a record.
 
-## Step 3: Validate service documentation
+## Step 3: Load service guidelines
 
-Look for a `.claude-skill-implement.md` file in the root of the current repository.
+Glob for `docs/*-guidelines.md` and read every file that matches. These files contain repo-specific conventions, patterns, and constraints that must inform the implementation plan and the code you write.
 
-### If the file does not exist:
+If no files match the glob:
 
-- Tell the user that the service documentation file `.claude-skill-implement.md` is missing.
-- Explain that this file should contain a technical overview of the service so that Claude can fully understand the codebase before implementing changes.
-- Ask the user whether they want to stop and create the doc, or bypass and proceed without it.
-- If the user chooses to bypass, acknowledge the risk and continue. Clearly note in your output which sections were missing so there is a record.
-
-### If the file exists:
-
-Read it and verify it contains ALL of the following sections (matched by heading text, case-insensitive):
-
-1. **Architecture Overview** — high-level description of the service's components, layers, dependency injection approach, internal communication (event buses, message queues), and data flow between them.
-2. **API Contracts** — the service's external-facing API surface (REST endpoints, gRPC services, GraphQL) including request/response shapes. Does not cover internal messaging — that belongs in Architecture Overview.
-3. **Data Model** — database tables, schemas, key entities and their relationships.
-4. **Coding Conventions & Patterns** — naming conventions, error handling patterns, logging standards, and testing patterns used in the codebase.
-5. **Key Business Rules / Domain Logic** — invariants and constraints that must always hold: validation rules, authorization model, multi-tenancy scoping, data lifecycle policies (e.g., "all queries must be scoped to org_id", "soft-delete only, never hard-delete").
-6. **Known Risks & Past Incidents** — lessons learned from past outages or production issues, and specific pitfalls to avoid when making changes (e.g., "adding unindexed queries to the endpoints table caused a P1 in 2025", "the event processing pipeline is sensitive to message ordering").
-
-If any section is missing:
-
-- List exactly which sections are missing.
-- Recommend that the user add them to `.claude-skill-implement.md` before proceeding.
-- Explain that implementing without these sections risks producing code that doesn't match expectations.
-- Ask the user whether they want to stop and update the doc, or bypass and proceed without the missing sections.
-- If the user chooses to bypass, acknowledge the risk and continue. Clearly note in your output which sections were missing so there is a record.
+- Tell the user that no guideline files were found under `docs/*-guidelines.md`.
+- Explain that these files help produce implementations that follow repo-specific conventions. They can be generated with the `/agent-readiness` skill.
+- Ask the user whether they want to stop and create them, or proceed without them.
 
 ## Step 4: Plan the implementation
 
@@ -69,7 +49,7 @@ Based on the ticket description, acceptance criteria, and service documentation 
 Execute the plan step by step:
 
 - Write clean, idiomatic code that follows the patterns and conventions already present in the codebase.
-- Follow the architecture and data model described in `.claude-skill-implement.md` (if available).
+- Follow the architecture and conventions described in the guideline files (if available).
 - Satisfy every item in the Acceptance Criteria checklist.
 - Include tests for the new functionality.
 - Do not refactor or modify code outside the scope of the ticket.
@@ -86,7 +66,7 @@ If any criteria are not met, ask the user whether to continue working on them or
 ## Rules
 
 - Always fetch the ticket fresh via MCP — do not ask the user to paste the ticket contents.
-- Never skip the ticket quality or service doc validation steps. The user must explicitly choose to bypass them.
+- Never skip the ticket quality or guideline validation steps. The user must explicitly choose to bypass them.
 - When the user bypasses a recommendation, do not repeatedly warn them. Acknowledge once and move on.
 - Keep implementation focused on the ticket scope. Do not add features, refactoring, or improvements beyond what the ticket asks for.
 - If the ticket references other tickets or links, read them for additional context but do not implement their scope.
