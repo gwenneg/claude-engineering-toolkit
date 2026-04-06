@@ -47,12 +47,12 @@ Present the results:
 | Requirement                                        | Status |
 |----------------------------------------------------|--------|
 | Domain-specific guideline files (docs/)            |   ❌   |
-| AGENTS.md with AI guidance and docs index          |   ❌   |
-| CLAUDE.md imports AGENTS.md                        |   ❌   |
-| CodeRabbit configured with guidelines              |   ❌   |
-| README.md with foundational context                |   ✅   |
-| CONTRIBUTING.md with contribution conventions      |   ❌   |
-| docs/ARCHITECTURE.md with institutional knowledge  |   ❌   |
+| AGENTS.md (agent onboarding + docs index)          |   ❌   |
+| CLAUDE.md (Claude-specific config + imports)       |   ❌   |
+| CodeRabbit configured to enforce guidelines        |   ❌   |
+| README.md (project overview + getting started)     |   ✅   |
+| CONTRIBUTING.md (contribution workflow)            |   ❌   |
+| docs/ARCHITECTURE.md (design decisions + context)  |   ❌   |
 ```
 
 Then proceed to step 2.
@@ -283,12 +283,12 @@ Re-check all requirements from step 1. Present the before/after comparison:
 | Requirement                                        | Before | After |
 |----------------------------------------------------|--------|-------|
 | Domain-specific guideline files (docs/)            |   ❌   |  ✅   |
-| AGENTS.md with AI guidance and docs index          |   ❌   |  ✅   |
-| CLAUDE.md imports AGENTS.md                        |   ❌   |  ✅   |
-| CodeRabbit configured with guidelines              |   ❌   |  ✅   |
-| README.md with foundational context                |   ✅   |  ✅   |
-| CONTRIBUTING.md with contribution conventions      |   ❌   |  ❌   |
-| docs/ARCHITECTURE.md with institutional knowledge  |   ❌   |  ❌   |
+| AGENTS.md (agent onboarding + docs index)          |   ❌   |  ✅   |
+| CLAUDE.md (Claude-specific config + imports)       |   ❌   |  ✅   |
+| CodeRabbit configured to enforce guidelines        |   ❌   |  ✅   |
+| README.md (project overview + getting started)     |   ✅   |  ✅   |
+| CONTRIBUTING.md (contribution workflow)            |   ❌   |  ❌   |
+| docs/ARCHITECTURE.md (design decisions + context)  |   ❌   |  ❌   |
 ```
 
 ## Step 8. Create a pull request (optional)
