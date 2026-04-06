@@ -11,6 +11,20 @@ When a step involves a discussion with the user, tell them they can say "done" o
 
 ## Step 1. Assess (before)
 
+Before making any changes, present the following explanation to the user:
+
+> This skill helps you build a layered documentation system for AI-assisted development. Each file has a distinct role:
+>
+> - **`docs/*-guidelines.md`** — Detailed, domain-specific playbooks (security, testing, database, etc.) with concrete rules agents follow
+> - **`AGENTS.md`** — The onboarding doc for any AI agent: cross-cutting conventions + an index pointing to the guideline files
+> - **`CLAUDE.md`** — A thin, Claude Code-specific layer that imports AGENTS.md and adds Claude-only behavior (build commands, etc.)
+> - **`.coderabbit.yaml`** — Points CodeRabbit (AI code reviewer) to the guideline files so it enforces your conventions during PR reviews
+> - **`README.md`** — The front door: high-level project context for humans and agents alike
+> - **`CONTRIBUTING.md`** — Contribution conventions for both humans and agents
+> - **`docs/ARCHITECTURE.md`** — Institutional knowledge about the system's design and key architectural decisions
+>
+> We'll check what's already in place, then walk through each file step by step.
+
 Check every requirement listed below and record its state as ✅ or ❌. Present the results in a table. This is a read-only step — do not modify any files.
 
 ### Requirements
@@ -45,7 +59,9 @@ Then proceed to step 2.
 
 ## Step 2. Generate or update domain-specific guideline files
 
-Guideline files give implementation and review agents concrete, repo-specific rules to follow instead of relying on generic knowledge. They live in `docs/*-guidelines.md`.
+Present the following explanation to the user:
+
+> Guideline files (`docs/*-guidelines.md`) are the deepest layer of the documentation system. They contain detailed, domain-specific rules (security, testing, database, etc.) — concrete conventions from your repo, not generic knowledge. AGENTS.md will point to these files so any AI agent can find them.
 
 Ask the user if they want to generate or update guideline files. If they decline, skip to the next step.
 
@@ -107,37 +123,95 @@ Once all verification agents have completed, overwrite each `docs/<domain>-guide
 
 ## Step 3. Generate or update AGENTS.md
 
-AGENTS.md provides AI-specific guidance that any agent (not just Claude) can use when working in this repository. It contains repo conventions, patterns, and an index pointing to the more granular guideline files in `docs/`.
+Present the following explanation to the user:
+
+> AGENTS.md is the onboarding doc for any AI agent — Claude, Cursor, CodeRabbit, or any other tool. It sits between the high-level README and the deep domain playbooks in `docs/`: it captures cross-cutting conventions (naming, code style, architecture) and includes an index pointing to the detailed guideline files. Unlike CLAUDE.md, it's agent-agnostic — any tool can use it.
+
+Ask the user if they want to generate or update AGENTS.md. If they decline, skip to the next step.
+
+If they accept, follow this process:
 
 ### 3a. Docs index
 
 Detect all existing `docs/*-guidelines.md` files. Present the list to the user and ask which ones to include or update in the AGENTS.md docs index. Allow the user to discuss this — they can add, remove, or reorder entries. When they say "done" or "skip", proceed.
 
-If AGENTS.md already exists, read it first. Add the docs index if missing, or update it if present, without touching unrelated sections.
-
-If AGENTS.md does not exist, create it with the docs index.
-
 ### 3b. AI guidance and repo conventions
 
-Ask the user if they also want to generate the AI guidance and repo conventions sections of AGENTS.md. Give a brief explanation: these sections capture repo-specific patterns and conventions that help agents work effectively — things like preferred coding style, architectural decisions, or domain-specific context that isn't obvious from the code alone.
+Launch an agent in the background using the Opus model. The agent must:
 
-If they accept, discuss with the user what should go in these sections. Let them drive the content. When they say "done" or "skip", write the agreed content to AGENTS.md.
+1. Thoroughly explore the repository — read source code, configuration files, build scripts, CI/CD pipelines, existing documentation (including README.md), and any other relevant files
+2. Read all existing `docs/*-guidelines.md` files to understand what's already covered in detail
+3. If AGENTS.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
+4. Identify cross-cutting conventions that span multiple domains and aren't already covered in the guideline files or README.md — things like naming conventions, code style, architectural patterns, common pitfalls, PR expectations, and any repo-specific workflows
+5. Return the complete AGENTS.md content as its result — do NOT write any files
 
-## Step 4. CLAUDE.md
+The proposed content should include:
+- The docs index from step 3a
+- Cross-cutting repo conventions that any AI agent needs to follow
+- Architectural context that isn't obvious from reading a single file
+- Common pitfalls or anti-patterns specific to this repo
+
+The content must stay focused on what isn't already covered elsewhere. The `docs/*-guidelines.md` files have the domain depth — AGENTS.md should not duplicate it.
+
+Once the agent has completed, present the proposed AGENTS.md content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to AGENTS.md.
+
+## Step 4. Generate or update CLAUDE.md
+
+Present the following explanation to the user:
+
+> CLAUDE.md is the Claude Code-specific layer on top of AGENTS.md. It uses `@AGENTS.md` to import the agent guidance automatically, then adds anything that only applies to Claude Code — like build/test commands to run or behavioral preferences. It's intentionally thin: most guidance lives in AGENTS.md where all agents can use it.
+
+Ask the user if they want to generate or update CLAUDE.md. If they decline, skip to the next step.
+
+If they accept, follow this process:
+
+CLAUDE.md must NOT duplicate or restate anything already in AGENTS.md or `docs/*-guidelines.md`. Since `@AGENTS.md` imports all that guidance, repeating it in CLAUDE.md is redundant and creates maintenance burden. The only content that belongs in CLAUDE.md is what is exclusive to Claude Code and irrelevant to other agents.
+
+**Belongs in CLAUDE.md** (Claude Code-exclusive):
+- `@AGENTS.md` import
+- Build/test/lint commands Claude Code should run (e.g., `mvn verify`, `npm test`)
+- Pre-commit hook behavior or CI checks Claude should be aware of
+- Claude Code-specific behavioral preferences (e.g., "always run tests before suggesting a PR")
+
+**Does NOT belong in CLAUDE.md** (put in AGENTS.md instead):
+- Coding conventions, naming patterns, code style
+- Architectural context, project structure
+- Domain-specific rules (these go in `docs/*-guidelines.md`)
+- Any guidance that would be useful to Cursor, CodeRabbit, or other AI tools
 
 ### If CLAUDE.md exists
 
-Check if it already contains `@AGENTS.md`. If not, ask the user if they want to add it. If they accept, add `@AGENTS.md` to CLAUDE.md.
+1. Read the existing CLAUDE.md
+2. Check if it already contains `@AGENTS.md`. If not, tell the user this import is needed for Claude Code to load the agent guidance, and offer to add it
+3. Read AGENTS.md and all `docs/*-guidelines.md` files
+4. Launch an agent in the background using the Sonnet model. The agent must:
+   - Read CLAUDE.md, AGENTS.md, and all `docs/*-guidelines.md` files
+   - Identify and remove any content in CLAUDE.md that duplicates or restates guidance already present in AGENTS.md or the guideline files
+   - Explore the repository for build scripts, CI/CD pipelines, pre-commit hooks, test commands, and any other configuration exclusive to Claude Code
+   - Propose an updated CLAUDE.md containing only Claude Code-exclusive content as defined above
+   - Return the proposed content as its result — do NOT write any files
+4. Present the proposed changes to the user for review. When they say "done" or "skip", write the agreed content
 
 ### If CLAUDE.md does not exist
 
-CLAUDE.md is a Claude Code-specific file that configures how Claude behaves in this repository. It can include project context, build/test commands, coding conventions, and references to other files (like AGENTS.md via the `@` import syntax). It's loaded automatically at the start of every Claude Code conversation, making it the primary way to give Claude persistent context about the project.
-
-Present this explanation to the user and offer to discuss and generate a CLAUDE.md together. The generated file should include `@AGENTS.md` to import the agent guidance. Let the user drive the content. When they say "done" or "skip", write the agreed content or move on.
+1. Read AGENTS.md and all `docs/*-guidelines.md` files
+2. Launch an agent in the background using the Sonnet model. The agent must:
+   - Read AGENTS.md and all `docs/*-guidelines.md` files to know what is already covered — none of this content should appear in CLAUDE.md
+   - Explore the repository for build scripts, CI/CD pipelines, pre-commit hooks, test commands, and any other configuration exclusive to Claude Code
+   - Propose a minimal CLAUDE.md containing only Claude Code-exclusive content:
+     - `@AGENTS.md` import (so Claude loads the agent guidance)
+     - Build/test commands that Claude Code should run when working in this repo
+     - Any Claude Code-specific behavioral preferences discovered from the repo
+   - Return the proposed content as its result — do NOT write any files
+3. Present the proposed content to the user for review. When they say "done" or "skip", write the agreed content
 
 ## Step 5. Configure CodeRabbit
 
-CodeRabbit can use the guideline files to inform its automated reviews. This step creates or updates a `.coderabbit.yaml` that points CodeRabbit to the `docs/*-guidelines.md` files.
+Present the following explanation to the user:
+
+> CodeRabbit is an AI-powered code review tool. By pointing it to the guideline files in `docs/`, it can enforce your repo-specific conventions automatically during pull request reviews — the same rules your implementation agents follow.
+
+This step creates or updates a `.coderabbit.yaml` that points CodeRabbit to the `docs/*-guidelines.md` files.
 
 Ask the user if they want to configure CodeRabbit. If they decline, skip to step 6.
 
@@ -166,7 +240,42 @@ Do not include any other fields or sections — only what differs from CodeRabbi
 4. If the existing file already contains a `knowledge_base.code_guidelines.filePatterns` entry, merge the patterns (avoid duplicates)
 5. Ensure the schema comment and reference comment are present at the top of the file, adding them if missing
 
-## Step 6. Assess (after)
+## Step 6. Generate or update README.md
+
+Present the following explanation to the user:
+
+> README.md is the front door of the repository — high-level project context for both humans and AI agents. While the guideline files and AGENTS.md give agents detailed rules, README.md helps them understand what the project is, how it's structured, and how to build and run it before diving into the code.
+
+Ask the user if they want to generate or update README.md. If they decline, skip to the next step.
+
+If they accept, follow this process:
+
+### 6a. Assess existing content
+
+If README.md exists, read it and assess whether it covers these areas:
+- Project purpose and description
+- Tech stack and key dependencies
+- Project structure overview
+- How to build and run the project
+- Links to further documentation (AGENTS.md, CONTRIBUTING.md, docs/, etc.)
+
+Present the assessment to the user, highlighting what's missing or could be improved.
+
+### 6b. Propose content
+
+Launch an agent in the background using the Opus model. The agent must:
+
+1. Thoroughly explore the repository — read source code, configuration files, build scripts, existing documentation, and any other relevant files
+2. Read AGENTS.md and all `docs/*-guidelines.md` files to understand what's already documented elsewhere and avoid duplicating it
+3. If README.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
+4. Propose README.md content covering the areas listed in step 6a, linking to AGENTS.md and other docs where appropriate
+5. Return the complete README.md content as its result — do NOT write any files
+
+### 6c. Review and write
+
+Present the proposed content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to README.md.
+
+## Step 7. Assess (after)
 
 Re-check all requirements from step 1. Present the before/after comparison:
 
@@ -182,7 +291,7 @@ Re-check all requirements from step 1. Present the before/after comparison:
 | docs/ARCHITECTURE.md with institutional knowledge  |   ❌   |  ❌   |
 ```
 
-## Step 7. Create a pull request (optional)
+## Step 8. Create a pull request (optional)
 
 Ask the user if they want to create a pull request with all the changes made during this session. If they decline, stop here.
 

@@ -119,11 +119,12 @@ The skill checks 7 requirements and presents a status table:
 6. CONTRIBUTING.md with contribution conventions
 7. docs/ARCHITECTURE.md with institutional knowledge
 
-After the initial assessment, it walks you through improving each area:
+After the initial assessment, it walks you through improving each area — explaining what each file is for as you go:
 - **Generate guideline files** — launches parallel agents to explore the codebase per domain, then verifies accuracy
-- **Generate AGENTS.md** — creates a docs index and AI-specific repo conventions
-- **Configure CLAUDE.md** — adds `@AGENTS.md` import for persistent agent context
+- **Generate AGENTS.md** — AI explores the repo and proposes cross-cutting conventions + a docs index (user reviews before writing)
+- **Generate CLAUDE.md** — AI proposes a minimal Claude Code-specific config that imports AGENTS.md without duplicating it (user reviews before writing)
 - **Configure CodeRabbit** — points `.coderabbit.yaml` to the guideline files
+- **Generate README.md** — AI proposes project overview content based on the repo (user reviews before writing)
 - **Before/after comparison** — re-checks all requirements and shows improvement
 - **Optional PR** — creates a pull request with all changes
 

@@ -11,6 +11,17 @@ claude --plugin-dir /path/to/claude-engineering-toolkit
 
 The skill runs entirely in your local checkout. It never pushes code or opens PRs unless you explicitly ask in the final step.
 
+## Documentation hierarchy
+
+The skill helps you build a layered documentation system where each file has a clear purpose:
+
+```
+CLAUDE.md          → @AGENTS.md + Claude-only behavior (thin by design)
+  └─ AGENTS.md     → cross-cutting conventions + docs index (any AI agent)
+       └─ docs/*-guidelines.md  → deep domain-specific rules
+README.md          → human-facing project overview (agents also benefit)
+```
+
 ## What it checks
 
 | # | Requirement | What it means |
@@ -54,13 +65,14 @@ The skill runs entirely in your local checkout. It never pushes code or opens PR
                                 │
                     ┌───────────┴───────────┐
                     │   Step 3: AGENTS.md   │
-                    │   docs index + AI     │
-                    │   guidance sections   │
+                    │   docs index + AI-    │
+                    │   proposed conventions│
                     └───────────┬───────────┘
                                 │
                     ┌───────────┴───────────┐
                     │   Step 4: CLAUDE.md   │
-                    │   add @AGENTS.md      │
+                    │   @AGENTS.md + AI-    │
+                    │   proposed config     │
                     └───────────┬───────────┘
                                 │
                     ┌───────────┴───────────┐
@@ -69,12 +81,17 @@ The skill runs entirely in your local checkout. It never pushes code or opens PR
                     └───────────┬───────────┘
                                 │
                     ┌───────────┴───────────┐
-                    │   Step 6: Assess      │
+                    │   Step 6: README.md   │
+                    │   AI-proposed content │
+                    └───────────┬───────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    │   Step 7: Assess      │
                     │   (before vs after)   │
                     └───────────┬───────────┘
                                 │
                     ┌───────────┴───────────┐
-                    │   Step 7: PR          │
+                    │   Step 8: PR          │
                     │   (optional)          │
                     └───────────────────────┘
 ```
@@ -95,6 +112,12 @@ Step 2 is where most of the work happens. The skill uses multiple agents in para
    - Absolute rules ("Never", "Always") are tested for counter-examples in existing code
    - Cross-document consistency is checked across all guideline files
 
+## AI-driven content generation
+
+Steps 3, 4, and 6 use AI agents to explore the repository and propose content for AGENTS.md, CLAUDE.md, and README.md respectively. The AI identifies conventions, patterns, and project context — then presents a draft for your review. You adjust, add, or remove content before anything is written. This makes the process accessible even if you've never created these files before.
+
+The skill also explains what each file is for as you go, so you understand the documentation hierarchy by the end of the run.
+
 ## Example output
 
 After a full run on a typical Java service:
@@ -111,7 +134,7 @@ After a full run on a typical Java service:
 | docs/ARCHITECTURE.md with institutional knowledge  |   ❌   |  ❌   |
 ```
 
-Generated files:
+Generated or updated files:
 ```
 docs/
   security-guidelines.md
@@ -122,6 +145,7 @@ docs/
   testing-guidelines.md
 AGENTS.md
 CLAUDE.md
+README.md
 .coderabbit.yaml
 ```
 
