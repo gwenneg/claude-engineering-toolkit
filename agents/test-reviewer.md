@@ -2,7 +2,7 @@
 name: test-reviewer
 description: Reviews test quality, coverage gaps, and test correctness
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

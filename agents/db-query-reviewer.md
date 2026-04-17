@@ -2,7 +2,7 @@
 name: db-query-reviewer
 description: Reviews JPA/Hibernate queries for performance and correctness
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

@@ -2,7 +2,7 @@
 name: performance-reviewer
 description: Reviews code changes for non-DB performance issues
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---
