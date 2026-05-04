@@ -46,3 +46,17 @@ Before creating the ticket, present a full preview of all fields (summary, descr
 Whenever you need to ask the user a question, always use the AskUserQuestion tool — never ask as plain text.
 
 Use the Jira MCP tools to create the ticket. Return the ticket key and URL when done. Always format the URL as `https://redhat.atlassian.net/browse/<TICKET_KEY>`.
+
+## Optional: Self-Improvement Review
+
+After completing the skill, use AskUserQuestion to ask the user if they want to run the self-improvement review. If they decline, skip it entirely.
+
+If they accept, reflect on your execution:
+
+- Did anything fail, feel awkward, or require unnecessary retries?
+- Were you missing context that CLAUDE.md or another project doc should have provided?
+- Is there a step in this skill that was unclear, redundant, or in the wrong order?
+
+If you identify a concrete improvement, present it as a **diff to the relevant file** (skill definition, CLAUDE.md, AGENTS.md, etc.) and offer to apply it. Do NOT just list observations — every finding must come with an actionable diff.
+Do not apply changes without approval.
+If nothing stands out, say so briefly and move on — do not force feedback.
