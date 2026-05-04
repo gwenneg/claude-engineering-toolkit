@@ -19,6 +19,17 @@ your repo. Likewise, adjust `.claude/settings.json` in your repo, based on the
 example provided in `exampleconfig/settings.json`. This provides claude
 permission to run `golangci-lint` and `govulncheck` commands without asking.
 
+Likewise, optionally add a stanza similar to the example below to the repo's `AGENTS.md`.
+
+```markdown
+## Review Exclusions
+
+When reviewing code changes, exclude the following paths from findings. These
+files are maintained externally and reviewed separately:
+
+- `.claude/hooks/` -- Claude Code hook scripts and their tests
+```
+
 ### Always loaded (shell alias)
 
 To permanently load the plugin in every session, add an alias to your shell config (`~/.bashrc`, `~/.zshrc`, etc.):
