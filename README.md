@@ -12,6 +12,24 @@ Use the `--plugin-dir` flag when starting Claude Code:
 claude --plugin-dir /path/to/claude-engineering-toolkit
 ```
 
+### Per-Repo
+
+Optionally, copy the contents of `exampleconfig/hooks` to `.claude/hooks` in
+your repo. Likewise, adjust `.claude/settings.json` in your repo, based on the
+example provided in `exampleconfig/settings.json`. This provides claude
+permission to run `golangci-lint` and `govulncheck` commands without asking.
+
+Likewise, optionally add a stanza similar to the example below to the repo's `AGENTS.md`.
+
+```markdown
+## Review Exclusions
+
+When reviewing code changes, exclude the following paths from findings. These
+files are maintained externally and reviewed separately:
+
+- `.claude/hooks/` -- Claude Code hook scripts and their tests
+```
+
 ### Always loaded (shell alias)
 
 To permanently load the plugin in every session, add an alias to your shell config (`~/.bashrc`, `~/.zshrc`, etc.):
@@ -32,7 +50,7 @@ Skills are user-invocable commands you can run directly in Claude Code with the 
 
 ### `/full-review` - Parallel Code Review
 
-Launches all 9 review agents in parallel to perform a comprehensive code review, comparing changes on your current branch vs `main`.
+Launches all 11 review agents in parallel to perform a comprehensive code review, comparing changes on your current branch vs `main`.
 
 ```
 /full-review
@@ -130,7 +148,7 @@ After the initial assessment, it walks you through improving each area — expla
 
 ## Review Agents
 
-The plugin includes 9 specialized review agents. Each agent focuses on a specific area and can be invoked individually with `@agent-name` or all at once via `/full-review`.
+The plugin includes 11 specialized review agents. Each agent focuses on a specific area and can be invoked individually with `@agent-name` or all at once via `/full-review`.
 
 | Agent | Model | Focus Area |
 |---|---|---|
@@ -143,6 +161,8 @@ The plugin includes 9 specialized review agents. Each agent focuses on a specifi
 | `@db-query-reviewer` | Sonnet | N+1 queries, unbounded SELECTs, JPA/Hibernate correctness |
 | `@db-schema-reviewer` | Opus | Missing indexes, migration safety, constraints, column types |
 | `@integration-reviewer` | Sonnet | Webhook delivery, retries, idempotency, circuit breakers |
+| `@lint-reviewer` | Sonnet | Runs `golangci-lint` against the code base, if it detects Go code. |
+| `@vuln-reviewer` | Sonnet | Runs `govulncheck` against the code base, if it detects Go code. |
 
 All agents run in the `background`, comparing the current branch against `main`.
 
@@ -161,7 +181,7 @@ claude
 > /full-review
 ```
 
-This compares your current branch against `main` and runs all 9 agents in parallel. You'll get a consolidated report with findings sorted by severity. Fix any Critical/High issues before pushing your PR.
+This compares your current branch against `main` and runs all 11 agents in parallel. You'll get a consolidated report with findings sorted by severity. Fix any Critical/High issues before pushing your PR.
 
 You can also run a single agent if you only care about a specific area:
 

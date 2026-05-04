@@ -2,7 +2,7 @@
 name: error-handling-reviewer
 description: Reviews error handling, exception management, and failure modes
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

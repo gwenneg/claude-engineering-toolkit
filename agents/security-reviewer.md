@@ -2,7 +2,7 @@
 name: security-reviewer
 description: Reviews code changes for security vulnerabilities
 model: opus
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---
