@@ -9,7 +9,13 @@ tools: [Read, Glob, Grep, Bash]
 
 Run golangci-lint against the entire Go codebase and report findings.
 
-## Step 1: Verify golangci-lint is available
+## Step 1: Check for Go source code
+
+Use Glob to search for `**/*.go` files. If no `.go` files exist anywhere in the repository, return this single message and stop:
+
+> **Skipped** -- No Go source files found in this repository. Lint review is not applicable.
+
+## Step 2: Verify golangci-lint is available
 
 Run `which golangci-lint` to check if it is installed and on the PATH.
 
@@ -19,7 +25,7 @@ If golangci-lint is NOT found, return this single finding and stop:
 
 If found, run `golangci-lint version` and note the major version (v1 vs v2).
 
-## Step 2: Detect the config file
+## Step 3: Detect the config file
 
 Search for config files in this order of priority:
 
@@ -31,7 +37,7 @@ Search for config files in this order of priority:
 - If the config is v2 format but the installed binary is v1 (or vice versa), skip that config and try the next one in the priority list.
 - If no compatible config is found, run without `-c` and note the version mismatch in the output.
 
-## Step 3: Run golangci-lint
+## Step 4: Run golangci-lint
 
 Run golangci-lint against the entire codebase:
 
@@ -41,7 +47,7 @@ golangci-lint run [-c <config-path>] --timeout 5m ./...
 
 If golangci-lint fails to execute (e.g., compilation errors, config errors), report the full error output and stop.
 
-## Step 4: Report findings
+## Step 5: Report findings
 
 If golangci-lint exits with code 0 (no issues found), report that no lint issues were found.
 

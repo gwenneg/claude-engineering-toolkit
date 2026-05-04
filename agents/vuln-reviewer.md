@@ -9,7 +9,13 @@ tools: [Read, Glob, Grep, Bash]
 
 Run govulncheck against the entire Go codebase and report vulnerability findings.
 
-## Step 1: Verify govulncheck is available
+## Step 1: Check for Go source code
+
+Use Glob to search for `**/*.go` files. If no `.go` files exist anywhere in the repository, return this single message and stop:
+
+> **Skipped** -- No Go source files found in this repository. Vulnerability review is not applicable.
+
+## Step 2: Verify govulncheck is available
 
 Run `which govulncheck` to check if it is installed and on the PATH.
 
@@ -19,7 +25,7 @@ If govulncheck is NOT found, return this single finding and stop:
 
 If found, run `govulncheck -version` and note the version.
 
-## Step 2: Find the module root
+## Step 3: Find the module root
 
 Look for `go.mod` at the repo root. If not found, search for it in subdirectories. govulncheck must run from the directory containing `go.mod`.
 
@@ -27,7 +33,7 @@ If no `go.mod` is found, return this single finding and stop:
 
 > **Critical** -- No go.mod found. This does not appear to be a Go module. Vulnerability scanning could not be performed.
 
-## Step 3: Run govulncheck
+## Step 4: Run govulncheck
 
 Run govulncheck from the module root directory:
 
@@ -37,7 +43,7 @@ govulncheck -show verbose ./...
 
 If govulncheck fails to execute (e.g., compilation errors, network errors), report the full error output and stop.
 
-## Step 4: Report findings
+## Step 5: Report findings
 
 If govulncheck exits with code 0 (no vulnerabilities found), report that no known vulnerabilities were found.
 
