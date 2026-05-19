@@ -58,24 +58,33 @@ The hook entry to add:
 
 Use `jq` to merge this into the existing `hooks.SessionEnd` array, preserving all other content. If `.claude/settings.json` does not exist, create it with just the hooks block.
 
-### 6. Install the pre-push git hook
+### 6. Optionally install the pre-push git hook
+
+Use the `AskUserQuestion` tool to present this choice:
+
+> **Pre-push reminder hook (optional)**
+>
+> The toolkit includes a lightweight `pre-push` git hook that counts unprocessed friction files in `.claude/friction/` and prints a reminder to run `/improve-docs` before they pile up. It never blocks a push — it only prints a note or warning depending on how many files are waiting.
+>
+> Adding it to the repo means everyone on the team gets the reminder automatically, as long as they run `git config core.hooksPath .githooks` once in their clone.
+
+Options to present:
+- **Yes** — install the hook and include it in the PR
+- **No** — skip it, the rest of the setup continues unchanged
+
+If the user selects **Yes**:
 
 ```bash
 mkdir -p .githooks
 curl -fsSL "https://raw.githubusercontent.com/gwenneg/claude-engineering-toolkit/{TAG}/scripts/pre-push" \
   -o .githooks/pre-push
 chmod +x .githooks/pre-push
-```
-
-This hook reminds contributors to run `/improve-docs` when friction files have been accumulating.
-
-Then wire git to use `.githooks/` for the current clone:
-
-```bash
 git config core.hooksPath .githooks
 ```
 
-This git config is local and not committed — every team member must run it once after cloning. Include this instruction in the PR body (step 7).
+Add `.githooks/pre-push` to the files staged in step 8, and add this to the PR body:
+
+> **For each team member:** run `git config core.hooksPath .githooks` once in your clone to activate the pre-push reminder hook.
 
 ### 7. Update .gitignore
 
@@ -100,8 +109,8 @@ Stage these files:
 - `.claude/skills/improve-docs/SKILL.md`
 - `.claude/.friction-capture-version`
 - `.claude/settings.json`
-- `.githooks/pre-push`
 - `.gitignore`
+- `.githooks/pre-push` (only if the user opted in at step 6)
 
 Create a branch named `chore/setup-friction-capture` (add `-2`, `-3`, etc. if it already exists).
 
@@ -111,9 +120,7 @@ Push the branch and open a PR:
 - Title: `chore: set up friction capture ({TAG})`
 - Body: describe what was added and include this note for reviewers:
 
-  > **For each team member after this PR is merged:**
-  > 1. Run `git config core.hooksPath .githooks` once in your clone to activate the pre-push reminder hook.
-  > 2. To opt in to friction capture, add `FRICTION_CAPTURE=1` to your `.claude/settings.local.json` (not committed, stays local).
+  > **For each team member:** after this PR is merged, add `FRICTION_CAPTURE=1` to your `.claude/settings.local.json` to opt in to friction capture. That file is not committed and stays local.
 
 - Base branch: `main`
 
