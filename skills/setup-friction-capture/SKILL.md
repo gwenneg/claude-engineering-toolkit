@@ -62,11 +62,14 @@ Use `jq` to merge this into the existing `hooks.SessionEnd` array, preserving al
 
 Use the `AskUserQuestion` tool to present this choice:
 
-> **Pre-push reminder hook (optional)**
+> **Pre-push blocking hook (optional)**
 >
-> The toolkit includes a lightweight `pre-push` git hook that counts unprocessed friction files in `.claude/friction/` and prints a reminder to run `/improve-docs` before they pile up. It never blocks a push — it only prints a note or warning depending on how many files are waiting.
+> The toolkit includes a `pre-push` git hook that blocks the push when unprocessed friction files are waiting in `.claude/friction/`. It prints:
+> `Push blocked: N friction file(s) captured in .claude/friction/. Run /improve-docs to help improve the repository docs, or use --no-verify to skip.`
 >
-> Adding it to the repo means everyone on the team gets this reminder automatically, as long as they run `git config core.hooksPath .githooks` once in their clone. When an AI agent is doing the push, the blocked push forces it to surface the message to the user rather than silently proceeding.
+> Blocking rather than just printing ensures the message always reaches the user — including when an AI agent is doing the push, since a failed push forces the agent to surface the error. The push can always be bypassed with `--no-verify`.
+>
+> Adding it to the repo means everyone on the team gets this behaviour automatically, as long as they run `git config core.hooksPath .githooks` once in their clone.
 
 Options to present:
 - **Yes** — install the hook and include it in the PR
@@ -84,7 +87,7 @@ git config core.hooksPath .githooks
 
 Add `.githooks/pre-push` to the files staged in step 8, and add this to the PR body:
 
-> **For each team member:** run `git config core.hooksPath .githooks` once in your clone to activate the pre-push reminder hook.
+> **For each team member:** run `git config core.hooksPath .githooks` once in your clone to activate the pre-push hook.
 
 ### 7. Update .gitignore
 
@@ -102,7 +105,7 @@ Check whether `.gitignore` already contains `/.claude/*`. If not, append this bl
 
 If `/.claude/*` is already present, ensure each negation line above exists individually, adding any that are missing. Never duplicate existing entries.
 
-### 7. Commit and open a PR
+### 8. Commit and open a PR
 
 Stage these files:
 - `.claude/scripts/capture-friction.sh`
@@ -124,7 +127,7 @@ Push the branch and open a PR:
 
 - Base branch: `main`
 
-### 8. Offer personal opt-in
+### 9. Offer personal opt-in
 
 After the PR is created, ask:
 
