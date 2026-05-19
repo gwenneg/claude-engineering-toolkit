@@ -1,6 +1,6 @@
 {
   "name": "engineering-toolkit",
-  "description": "Specialized review agents and engineering skills for parallel PR review, Jira workflows, and ticket-driven implementation",
+  "description": "Specialized review agents and engineering skills for parallel PR review, Jira workflows, ticket-driven implementation, and friction-driven documentation improvement",
   "version": "1.0.0",
   "components": {
     "agents": "agents/",

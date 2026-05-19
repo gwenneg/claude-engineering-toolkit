@@ -1,6 +1,6 @@
 # Claude Engineering Toolkit
 
-A Claude Code plugin that provides specialized review agents and engineering skills for thorough, parallel code reviews, Jira workflows, and ticket-driven implementation.
+A Claude Code plugin that provides specialized review agents and engineering skills for thorough, parallel code reviews, Jira workflows, ticket-driven implementation, and friction-driven documentation improvement.
 
 ## Installation
 
@@ -101,6 +101,30 @@ The skill will:
 - Fetch your assigned Jira tickets (not Done/Closed), open GitHub review requests, and incomplete Google Tasks — all in parallel
 - Display three sorted tables: Jira tickets by priority/status, GitHub PRs (non-draft first), and Google Tasks by due date
 - Provide prioritized recommendations on what to work on next
+
+### `/setup-friction-capture` - Bootstrap Friction Capture
+
+Sets up the friction capture and documentation improvement loop in a shared repository. Fetches the script and `/improve-docs` skill from the latest toolkit release, wires the `SessionEnd` hook, and opens a PR with all committed changes. Re-running updates the repo to the latest release.
+
+```
+/setup-friction-capture
+```
+
+Everything needed by the team is committed to the repo — teammates get it automatically on pull. The only personal step is opting in: the skill offers to add `FRICTION_CAPTURE=1` to your local `.claude/settings.local.json` after the PR is created.
+
+See [`skills/setup-friction-capture/README.md`](skills/setup-friction-capture/README.md) for full details.
+
+### `/improve-docs` - Improve Documentation from Friction
+
+Processes captured friction events (corrections, mistakes, clarifications, denied tool calls) into targeted documentation edits and opens a PR. Also checks whether the installed toolkit version is current on every run.
+
+```
+/improve-docs
+```
+
+Requires `/setup-friction-capture` to have been run in the repo first. Friction files accumulate automatically via the `SessionEnd` hook for anyone who has opted in; run this skill whenever you want to turn them into improvements.
+
+See [`skills/improve-docs/README.md`](skills/improve-docs/README.md) for full details.
 
 ### `/agent-readiness` - AI-Readiness Assessment
 
