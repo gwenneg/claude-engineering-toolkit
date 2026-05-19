@@ -60,13 +60,19 @@ Use `jq` to merge this into the existing `hooks.SessionEnd` array, preserving al
 
 ### 6. Update .gitignore
 
-Ensure `.gitignore` contains the following entry (add if missing):
+The `.claude/` directory contains a mix of files that should be committed (scripts, skills, settings, version file) and files that must stay local (friction events, local settings, lock files, logs). Use an allowlist pattern to make this explicit.
+
+Check whether `.gitignore` already contains `/.claude/*`. If not, append this block:
 
 ```
-.claude/friction/
+/.claude/*
+!/.claude/scripts/
+!/.claude/skills/
+!/.claude/settings.json
+!/.claude/.friction-capture-version
 ```
 
-This keeps captured friction files local — they are per-person and ephemeral.
+If `/.claude/*` is already present, ensure each negation line above exists individually, adding any that are missing. Never duplicate existing entries.
 
 ### 7. Commit and open a PR
 
