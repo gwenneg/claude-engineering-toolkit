@@ -66,7 +66,7 @@ Use the `AskUserQuestion` tool to present this choice:
 >
 > The toolkit includes a lightweight `pre-push` git hook that counts unprocessed friction files in `.claude/friction/` and prints a reminder to run `/improve-docs` before they pile up. It never blocks a push — it only prints a note or warning depending on how many files are waiting.
 >
-> Adding it to the repo means everyone on the team gets the reminder automatically, as long as they run `git config core.hooksPath .githooks` once in their clone.
+> Adding it to the repo means everyone on the team gets this reminder automatically, as long as they run `git config core.hooksPath .githooks` once in their clone. When an AI agent is doing the push, the blocked push forces it to surface the message to the user rather than silently proceeding.
 
 Options to present:
 - **Yes** — install the hook and include it in the PR
