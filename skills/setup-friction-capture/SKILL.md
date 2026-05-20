@@ -19,7 +19,7 @@ If the API call fails, stop and report the error. Use the returned tag (e.g. `v1
 
 ```bash
 mkdir -p .claude/scripts
-curl -fsSL "https://raw.githubusercontent.com/gwenneg/claude-engineering-toolkit/{TAG}/scripts/capture-friction.sh" \
+curl -fsSL "https://raw.githubusercontent.com/gwenneg/claude-engineering-toolkit/{TAG}/skills/setup-friction-capture/scripts/capture-friction.sh" \
   -o .claude/scripts/capture-friction.sh
 chmod +x .claude/scripts/capture-friction.sh
 ```
@@ -79,7 +79,7 @@ If the user selects **Yes**:
 
 ```bash
 mkdir -p .githooks
-curl -fsSL "https://raw.githubusercontent.com/gwenneg/claude-engineering-toolkit/{TAG}/scripts/pre-push" \
+curl -fsSL "https://raw.githubusercontent.com/gwenneg/claude-engineering-toolkit/{TAG}/skills/setup-friction-capture/.githooks/pre-push" \
   -o .githooks/pre-push
 chmod +x .githooks/pre-push
 git config core.hooksPath .githooks
