@@ -1,0 +1,31 @@
+# Default domain list for guideline generation
+# These are merged with any domains already listed in AGENTS.md
+domains:
+  - name: security
+    description: Security patterns, authentication, authorization
+  - name: performance
+    description: Performance optimization, concurrency, thread safety, resource contention
+  - name: error-handling
+    description: Error handling patterns and propagation
+  - name: api-contracts
+    description: API design, REST conventions, versioning
+  - name: database
+    description: Schema design, query patterns, migrations
+  - name: testing
+    description: Test patterns, coverage, test organization
+  - name: integration
+    description: Integration patterns, external services, webhooks
+  - name: logging-and-observability
+    description: Logging standards, structured logging, metrics, tracing, and diagnostic conventions
+  - name: configuration
+    description: Configuration management patterns, environment variables, feature flags, and secrets handling
+  - name: code-organization
+    description: Project structure conventions, module boundaries, dependency direction rules, and import patterns
+  - name: data-validation
+    description: Input validation, data transformation, serialization/deserialization, and schema enforcement patterns
+  - name: dependency-management
+    description: Dependency selection, version management, upgrade policies, and supply chain conventions
+  - name: deployment
+    description: Deployment pipelines, infrastructure-as-code conventions, environment management, and release processes
+  - name: async-and-messaging
+    description: Asynchronous processing, message queues, event-driven architecture, and background job conventions

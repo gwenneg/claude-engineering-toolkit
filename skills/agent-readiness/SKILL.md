@@ -1,6 +1,8 @@
 ---
 name: agent-readiness
-description: Assess and improve a repository's readiness for AI-assisted development
+description: Assess and improve a repository's readiness for AI-assisted development. Use when asked about agent-readiness, AI setup, documentation structure, AGENTS.md, CLAUDE.md, or guideline files.
+compatibility: Step 8 (PR creation) requires git and gh CLI to be installed
+allowed-tools: Read
 ---
 
 Assess the current repository's readiness for AI-assisted development, then offer to improve it step by step. $ARGUMENTS
@@ -11,7 +13,7 @@ When a step involves a discussion with the user, tell them they can say "done" o
 
 ## Step 1. Assess (before)
 
-Before making any changes, present the following explanation to the user:
+Before making any changes, present the following explanation to the user (see [docs/documentation-system.md](docs/documentation-system.md) for complete details):
 
 > This skill helps you build a layered documentation system for AI-assisted development. Each file has a distinct role:
 >
@@ -71,7 +73,7 @@ If they accept, follow this process:
 
 First, check if `AGENTS.md` exists and contains a docs index section. If it does, extract the domains already listed there — these were identified in a previous run and should be included in the suggested list.
 
-Then, start from this curated list of domains:
+Then, start from the curated domain list in [templates/default-domains.yaml](templates/default-domains.yaml):
 
 - security
 - performance (includes concurrency, thread safety, resource contention)
@@ -91,10 +93,11 @@ Present the filtered list to the user and ask if they want to add any custom dom
 
 For each confirmed domain, launch an agent in the background using the Opus model. Each agent must:
 
-1. Thoroughly explore the repository from its domain perspective — read source code, configuration files, existing documentation, test patterns, and any other relevant files
-2. Identify the conventions, patterns, libraries, frameworks, and practices used in the repo for that domain
-3. If `docs/<domain>-guidelines.md` already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
-4. Return the complete guideline content as its result — do NOT write any files
+1. Read [templates/validation/guideline-checklist.md](templates/validation/guideline-checklist.md) to understand the quality criteria the guideline must meet
+2. Thoroughly explore the repository from its domain perspective — read source code, configuration files, existing documentation, test patterns, and any other relevant files
+3. Identify the conventions, patterns, libraries, frameworks, and practices used in the repo for that domain
+4. If `docs/<domain>-guidelines.md` already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
+5. Return the complete guideline content as its result — do NOT write any files
 
 Each guideline must not exceed 200 lines. To stay within this limit, agents must:
 
@@ -109,15 +112,11 @@ Once all exploration agents have completed, ensure the `docs/` directory exists 
 
 ### 2c. Verify guideline accuracy
 
-For each domain, launch a verification agent in the background using the Sonnet model. Each verification agent must read `docs/<domain>-guidelines.md` for its assigned domain **and** all other `docs/*-guidelines.md` files for cross-document consistency checks. Each verification agent must:
+For each domain, launch a verification agent in the background using the Sonnet model. Each verification agent must read `docs/<domain>-guidelines.md` for its assigned domain **and** all other `docs/*-guidelines.md` files for cross-document consistency checks.
 
-1. **Reference accuracy** — Check every file path, class name, function name, and library reference mentioned in the guideline against the actual codebase using Grep and Glob. Flag any claim that cannot be confirmed (e.g., a file that doesn't exist, a pattern that isn't used, a library that isn't in the dependencies)
-2. **Factual claims about libraries/frameworks** — Verify any claim about default values, behaviors, or semantics of external libraries and frameworks (e.g., "the default is unbounded", "this annotation requires X"). Use WebSearch to check official documentation when needed. Remove or correct any claim that is inaccurate
-3. **Absolute rules vs existing code** — For every rule using absolute language ("Never", "Always", "Must", "All"), grep the codebase for counter-examples. If existing code violates the rule, either soften the language to "Prefer" / "Avoid" with the known exceptions listed, or scope the rule to specific contexts (e.g., "for new code" or "in module X")
-4. **Cross-document consistency** — Compare the guideline against all other domain guidelines to detect contradictory advice. If two guidelines make conflicting claims, flag the conflict and reconcile by choosing the more specific or authoritative rule
-5. Return the corrected version of the guideline as its result — do NOT write any files
+Each verification agent must validate the guideline against [templates/validation/guideline-checklist.md](templates/validation/guideline-checklist.md).
 
-The verification agent must NOT add new content — its only job is to confirm or correct what the exploration agent produced.
+The verification agent must NOT add new content — its only job is to confirm or correct what the exploration agent produced. Return the corrected version of the guideline as its result — do NOT write any files.
 
 Once all verification agents have completed, overwrite each `docs/<domain>-guidelines.md` with the corrected content.
 
@@ -139,11 +138,12 @@ Detect all existing `docs/*-guidelines.md` files. Present the list to the user a
 
 Launch an agent in the background using the Opus model. The agent must:
 
-1. Thoroughly explore the repository — read source code, configuration files, build scripts, CI/CD pipelines, existing documentation (including README.md), and any other relevant files
-2. Read all existing `docs/*-guidelines.md` files to understand what's already covered in detail
-3. If AGENTS.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
-4. Identify cross-cutting conventions that span multiple domains and aren't already covered in the guideline files or README.md — things like naming conventions, code style, architectural patterns, common pitfalls, PR expectations, and any repo-specific workflows
-5. Return the complete AGENTS.md content as its result — do NOT write any files
+1. Read [templates/validation/agents-md-checklist.md](templates/validation/agents-md-checklist.md) to understand the quality criteria AGENTS.md must meet
+2. Thoroughly explore the repository — read source code, configuration files, build scripts, CI/CD pipelines, existing documentation (including README.md), and any other relevant files
+3. Read all existing `docs/*-guidelines.md` files to understand what's already covered in detail
+4. If AGENTS.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
+5. Identify cross-cutting conventions that span multiple domains and aren't already covered in the guideline files or README.md — things like naming conventions, code style, architectural patterns, common pitfalls, PR expectations, and any repo-specific workflows
+6. Return the complete AGENTS.md content as its result — do NOT write any files
 
 The proposed content should include:
 - The docs index from step 3a
@@ -153,7 +153,9 @@ The proposed content should include:
 
 The content must stay focused on what isn't already covered elsewhere. The `docs/*-guidelines.md` files have the domain depth — AGENTS.md should not duplicate it.
 
-Once the agent has completed, present the proposed AGENTS.md content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to AGENTS.md.
+Once the agent has completed, validate the proposed AGENTS.md content against [templates/validation/agents-md-checklist.md](templates/validation/agents-md-checklist.md).
+
+Present the validated AGENTS.md content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to AGENTS.md.
 
 ## Step 4. Generate or update CLAUDE.md
 
@@ -165,7 +167,7 @@ Ask the user if they want to generate or update CLAUDE.md. If they decline, skip
 
 If they accept, follow this process:
 
-CLAUDE.md must NOT duplicate or restate anything already in AGENTS.md or `docs/*-guidelines.md`. Since `@AGENTS.md` imports all that guidance, repeating it in CLAUDE.md is redundant and creates maintenance burden. The only content that belongs in CLAUDE.md is what is exclusive to Claude Code and irrelevant to other agents.
+CLAUDE.md must NOT duplicate or restate anything already in AGENTS.md or `docs/*-guidelines.md`. Since `@AGENTS.md` imports all that guidance, repeating it in CLAUDE.md is redundant and creates maintenance burden. The only content that belongs in CLAUDE.md is what is exclusive to Claude Code and irrelevant to other agents. See [templates/claude-md-scope.md](templates/claude-md-scope.md) for complete scope guidance.
 
 **Belongs in CLAUDE.md** (Claude Code-exclusive):
 - `@AGENTS.md` import
@@ -185,17 +187,20 @@ CLAUDE.md must NOT duplicate or restate anything already in AGENTS.md or `docs/*
 2. Check if it already contains `@AGENTS.md`. If not, tell the user this import is needed for Claude Code to load the agent guidance, and offer to add it
 3. Read AGENTS.md and all `docs/*-guidelines.md` files
 4. Launch an agent in the background using the Sonnet model. The agent must:
+   - Read [templates/validation/claude-md-checklist.md](templates/validation/claude-md-checklist.md) to understand the quality criteria CLAUDE.md must meet
    - Read CLAUDE.md, AGENTS.md, and all `docs/*-guidelines.md` files
    - Identify and remove any content in CLAUDE.md that duplicates or restates guidance already present in AGENTS.md or the guideline files
    - Explore the repository for build scripts, CI/CD pipelines, pre-commit hooks, test commands, and any other configuration exclusive to Claude Code
    - Propose an updated CLAUDE.md containing only Claude Code-exclusive content as defined above
    - Return the proposed content as its result — do NOT write any files
-4. Present the proposed changes to the user for review. When they say "done" or "skip", write the agreed content
+5. Validate the proposed CLAUDE.md content against [templates/validation/claude-md-checklist.md](templates/validation/claude-md-checklist.md).
+6. Present the validated content to the user for review. When they say "done" or "skip", write the agreed content
 
 ### If CLAUDE.md does not exist
 
 1. Read AGENTS.md and all `docs/*-guidelines.md` files
 2. Launch an agent in the background using the Sonnet model. The agent must:
+   - Read [templates/validation/claude-md-checklist.md](templates/validation/claude-md-checklist.md) to understand the quality criteria CLAUDE.md must meet
    - Read AGENTS.md and all `docs/*-guidelines.md` files to know what is already covered — none of this content should appear in CLAUDE.md
    - Explore the repository for build scripts, CI/CD pipelines, pre-commit hooks, test commands, and any other configuration exclusive to Claude Code
    - Propose a minimal CLAUDE.md containing only Claude Code-exclusive content:
@@ -203,7 +208,8 @@ CLAUDE.md must NOT duplicate or restate anything already in AGENTS.md or `docs/*
      - Build/test commands that Claude Code should run when working in this repo
      - Any Claude Code-specific behavioral preferences discovered from the repo
    - Return the proposed content as its result — do NOT write any files
-3. Present the proposed content to the user for review. When they say "done" or "skip", write the agreed content
+3. Validate the proposed CLAUDE.md content against [templates/validation/claude-md-checklist.md](templates/validation/claude-md-checklist.md).
+4. Present the validated content to the user for review. When they say "done" or "skip", write the agreed content
 
 ## Step 5. Configure CodeRabbit
 
@@ -219,7 +225,7 @@ If they accept:
 
 ### If `.coderabbit.yaml` does not exist
 
-Create a new file with this content:
+Create a new file with the template from [templates/coderabbit-template.yaml](templates/coderabbit-template.yaml):
 
 ```yaml
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
@@ -265,15 +271,18 @@ Present the assessment to the user, highlighting what's missing or could be impr
 
 Launch an agent in the background using the Opus model. The agent must:
 
-1. Thoroughly explore the repository — read source code, configuration files, build scripts, existing documentation, and any other relevant files
-2. Read AGENTS.md and all `docs/*-guidelines.md` files to understand what's already documented elsewhere and avoid duplicating it
-3. If README.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
-4. Propose README.md content covering the areas listed in step 6a, linking to AGENTS.md and other docs where appropriate
-5. Return the complete README.md content as its result — do NOT write any files
+1. Read [templates/validation/readme-checklist.md](templates/validation/readme-checklist.md) to understand the quality criteria README.md must meet
+2. Thoroughly explore the repository — read source code, configuration files, build scripts, existing documentation, and any other relevant files
+3. Read AGENTS.md and all `docs/*-guidelines.md` files to understand what's already documented elsewhere and avoid duplicating it
+4. If README.md already exists, read it first and incorporate its content — update with new findings while preserving still-accurate content
+5. Propose README.md content covering the areas listed in step 6a, linking to AGENTS.md and other docs where appropriate
+6. Return the complete README.md content as its result — do NOT write any files
 
 ### 6c. Review and write
 
-Present the proposed content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to README.md.
+Validate the proposed README.md content against [templates/validation/readme-checklist.md](templates/validation/readme-checklist.md).
+
+Present the validated content to the user for review. Let them adjust, add, or remove content. When they say "done" or "skip", write the agreed content to README.md.
 
 ## Step 7. Assess (after)
 
@@ -290,6 +299,14 @@ Re-check all requirements from step 1. Present the before/after comparison:
 | CONTRIBUTING.md (contribution workflow)            |   ❌   |  ❌   |
 | docs/ARCHITECTURE.md (design decisions + context)  |   ❌   |  ❌   |
 ```
+
+Run final automated validation checks:
+
+```bash
+bash <skill-root>/templates/validation/automated-checks.sh
+```
+
+Review the validation report and fix any errors before proceeding to the optional PR step.
 
 ## Step 8. Create a pull request (optional)
 
