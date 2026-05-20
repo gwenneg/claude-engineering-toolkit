@@ -2,7 +2,7 @@
 name: api-contract-reviewer
 description: Reviews REST API changes for contract compliance and backward compatibility
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

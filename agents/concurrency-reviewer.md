@@ -2,7 +2,7 @@
 name: concurrency-reviewer
 description: Reviews code for race conditions, thread safety, and concurrency bugs
 model: opus
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

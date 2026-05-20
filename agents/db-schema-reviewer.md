@@ -2,7 +2,7 @@
 name: db-schema-reviewer
 description: Reviews database schema changes and migrations for safety and correctness
 model: opus
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---

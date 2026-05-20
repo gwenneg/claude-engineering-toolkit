@@ -2,7 +2,7 @@
 name: integration-reviewer
 description: Reviews webhook/notification delivery logic for correctness and reliability
 model: sonnet
-isolation: worktree
+isolation: none
 background: true
 tools: [Read, Glob, Grep, Bash]
 ---
